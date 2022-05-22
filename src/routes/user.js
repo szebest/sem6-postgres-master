@@ -70,6 +70,20 @@ router.delete('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
+        if (req.body.servers) {
+            for (const server of req.body.servers){
+                const serverId = parseInt(server)
+                await prisma.slaves.update({
+                    where: {
+                        id: serverId
+                    },
+                    data: {
+                        ownerId: id
+                    }
+                })
+            }
+        }
+
         const updated = await prisma.users.update({
             where: {
                 id
@@ -86,8 +100,6 @@ router.patch('/:id', async (req, res) => {
                 servers: true
             }
         })
-
-        delete updated.hashed_password
 
         return res.json(updated).status(200)
     }
