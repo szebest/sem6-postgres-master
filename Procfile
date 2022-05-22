@@ -1,1 +1,1 @@
-web: npm install && npx prisma generate && node src/index.js
+web: npm run build
