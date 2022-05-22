@@ -1,25 +1,10 @@
-import { PrismaClient } from '@prisma/client'
-import express from 'express'
+const express = require('express')
 const app = express()
 const PORT = process.env.PORT ?? 3000
 
-const prisma = new PrismaClient()
+const routes = require('./routes');
 
-app.get('/', async (req, res) => {
-    try {
-        const allUsers = await prisma.users.findMany({
-            include: {
-                servers: true
-            }
-        })
-
-        return res.json(allUsers).status(200)
-    }
-    catch(err) {
-        console.log(err)
-        res.sendStatus(500)
-    }
-})
+app.use('/api/v1', routes)
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
