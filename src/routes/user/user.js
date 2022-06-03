@@ -86,6 +86,60 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
+router.patch('/admin/:id', async (req, res) => {
+    const id = parseInt(req.params.id)
+    try {
+        const updated = await prisma.$transaction(async (prisma) => {
+            const dataObj = {
+                select: {
+                    ...USER_SELECT,
+                    user_type: true,
+                    servers: {
+                        select: SERVER_SELECT
+                    }
+                },
+                where: {
+                    id
+                },
+                data: {
+                    name: req.body.name,
+                    surname: req.body.surname,
+                    login: req.body.login,
+                    hashed_password: req.body.password,
+                    email: req.body.email,
+                    phone_number: req.body.phone_number
+                }
+            }
+            
+            const userTypeParsed = parseInt(req.body.user_type)
+
+            if (!isNaN(userTypeParsed)) {
+                dataObj.data['user_type'] = userTypeParsed
+            }
+    
+            if (req.body.servers && req.body.servers.length > 0 && !isNaN(userTypeParsed) && userTypeParsed >= 2) {
+                dataObj.data['servers'] = {
+                    connect: req.body.servers.map((value) => {
+                        return {
+                            id: value
+                        }
+                    })
+                }
+            }
+
+            return prisma.users.update(dataObj)
+        }).catch(err => {
+            throw new Error(err)
+        })
+
+        return res.json(updated).status(200)
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
 router.patch('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
@@ -107,60 +161,6 @@ router.patch('/:id', async (req, res) => {
                 email: req.body.email,
                 phone_number: req.body.phone_number
             }
-        })
-
-        return res.json(updated).status(200)
-    }
-    catch(err) {
-        console.log(err)
-        res.sendStatus(500)
-    }
-})
-
-router.patch('/admin/:id', async (req, res) => {
-    const id = parseInt(req.params.id)
-    try {
-        const updated = await prisma.$transaction(async (prisma) => {
-            const dataObj = {
-                select: {
-                    ...USER_SELECT,
-                    servers: {
-                        select: SERVER_SELECT
-                    }
-                },
-                where: {
-                    id
-                },
-                data: {
-                    name: req.body.name,
-                    surname: req.body.surname,
-                    login: req.body.login,
-                    hashed_password: req.body.password,
-                    email: req.body.email,
-                    phone_number: req.body.phone_number,
-                    userType: parseInt(req.body.user_type)
-                }
-            }
-            
-            const userTypeParsed = parseInt(req.body.user_type)
-
-            if (!isNan(userTypeParsed)) {
-                dataObj.data['userType'] = userTypeParsed
-            }
-    
-            if (req.body.servers && !isNaN(userTypeParsed) && userTypeParsed >= 2) {
-                dataObj.data['servers'] = {
-                    connect: req.body.servers.map((value) => {
-                        return {
-                            id: value
-                        }
-                    })
-                }
-            }
-
-            return prisma.users.update(dataObj)
-        }).catch(err => {
-            throw new Error(err)
         })
 
         return res.json(updated).status(200)
