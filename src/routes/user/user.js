@@ -1,10 +1,10 @@
 const express = require('express');
 router = express.Router();
 
-const prisma = require('../prismaClient')
+const prisma = require('../../prismaClient')
 
-const validators = require('../middlewares/validators/');
-const passwordHash = require('../middlewares/util/passwordHash');
+const { userVerificator } = require('../../middlewares/validators');
+const passwordHash = require('../../middlewares/util/passwordHash');
 
 router.get('/', async (_, res) => {
     try {
@@ -29,7 +29,7 @@ router.get('/', async (_, res) => {
 router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
-        const user = await prisma.users.findFirst({
+        const user = await prisma.users.findUnique({
             where: {
                 id
             },
@@ -70,20 +70,6 @@ router.delete('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
-        if (req.body.servers) {
-            for (const server of req.body.servers){
-                const serverId = parseInt(server)
-                await prisma.slaves.update({
-                    where: {
-                        id: serverId
-                    },
-                    data: {
-                        ownerId: id
-                    }
-                })
-            }
-        }
-
         const updated = await prisma.users.update({
             where: {
                 id
@@ -101,6 +87,8 @@ router.patch('/:id', async (req, res) => {
             }
         })
 
+        delete updated.hashed_password
+
         return res.json(updated).status(200)
     }
     catch(err) {
@@ -109,7 +97,60 @@ router.patch('/:id', async (req, res) => {
     }
 })
 
-router.post('/register', validators.userVerificator, passwordHash, async (req, res) => {
+router.patch('/admin/:id', async (req, res) => {
+    const id = parseInt(req.params.id)
+    try {
+        const updated = await prisma.$transaction(async (prisma) => {
+            const dataObj = {
+                where: {
+                    id
+                },
+                data: {
+                    name: req.body.name,
+                    surname: req.body.surname,
+                    login: req.body.login,
+                    hashed_password: req.body.password,
+                    email: req.body.email,
+                    phone_number: req.body.phone_number,
+                    userType: parseInt(req.body.user_type)
+                },
+                include: {
+                    servers: true
+                }
+            }
+            
+            const userTypeParsed = parseInt(req.body.user_type)
+
+            if (!isNan(userTypeParsed)) {
+                dataObj.data['userType'] = userTypeParsed
+            }
+    
+            if (req.body.servers && !isNaN(userTypeParsed) && userTypeParsed >= 2) {
+                dataObj.data['servers'] = {
+                    connect: req.body.servers.map((value) => {
+                        return {
+                            id: value
+                        }
+                    })
+                }
+            }
+
+            return prisma.users.update(dataObj)
+        }).catch(err => {
+            throw new Error(err)
+        })
+
+        delete updated.hashed_password
+
+        return res.json(updated).status(200)
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+router.post('/register', userVerificator, passwordHash, async (req, res) => {
     try {
         const created = await prisma.users.create({
             data: {
