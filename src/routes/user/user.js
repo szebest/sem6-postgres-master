@@ -6,18 +6,34 @@ const prisma = require('../../prismaClient')
 const { userVerificator } = require('../../middlewares/validators');
 const passwordHash = require('../../middlewares/util/passwordHash');
 
+const SERVER_SELECT = {
+    server_URL: true,
+    id: true,
+    ownerId: false
+}
+
+const USER_SELECT = {
+    id: true,
+    created_at: true,
+    name: true,
+    surname: true,
+    login: true,
+    email: true,
+    phone_number: true,
+    hashed_password: false,
+    user_type: false
+}
+
 router.get('/', async (_, res) => {
     try {
         const allUsers = (await prisma.users.findMany({
-            include: {
-                servers: true
+            select: {
+                ...USER_SELECT,
+                servers: {
+                    select: SERVER_SELECT
+                }
             }
-        })).map((value) => {
-            delete value.hashed_password
-            delete value.user_type
-
-            return value
-        })
+        }))
 
         return res.json(allUsers).status(200)
     }
@@ -31,16 +47,16 @@ router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const user = await prisma.users.findUnique({
+            select: {
+                ...USER_SELECT,
+                servers: {
+                    select: SERVER_SELECT
+                }
+            },
             where: {
                 id
             },
-            include: {
-                servers: true
-            }
         })
-
-        delete user.hashed_password
-        delete value.user_type
 
         return res.json(user).status(200)
     }
@@ -54,13 +70,13 @@ router.delete('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const deleted = await prisma.users.delete({
+            select: {
+                ...USER_SELECT
+            },
             where: {
                 id
             }
         })
-
-        delete deleted.hashed_password
-        delete deleted.user_type
 
         return res.json(deleted).status(200)
     }
@@ -74,6 +90,12 @@ router.patch('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const updated = await prisma.users.update({
+            select: {
+                ...USER_SELECT,
+                servers: {
+                    select: SERVER_SELECT
+                }
+            },
             where: {
                 id
             },
@@ -84,14 +106,8 @@ router.patch('/:id', async (req, res) => {
                 hashed_password: req.body.password,
                 email: req.body.email,
                 phone_number: req.body.phone_number
-            },
-            include: {
-                servers: true
             }
         })
-
-        delete updated.hashed_password
-        delete updated.user_type
 
         return res.json(updated).status(200)
     }
@@ -106,6 +122,12 @@ router.patch('/admin/:id', async (req, res) => {
     try {
         const updated = await prisma.$transaction(async (prisma) => {
             const dataObj = {
+                select: {
+                    ...USER_SELECT,
+                    servers: {
+                        select: SERVER_SELECT
+                    }
+                },
                 where: {
                     id
                 },
@@ -117,9 +139,6 @@ router.patch('/admin/:id', async (req, res) => {
                     email: req.body.email,
                     phone_number: req.body.phone_number,
                     userType: parseInt(req.body.user_type)
-                },
-                include: {
-                    servers: true
                 }
             }
             
@@ -144,9 +163,6 @@ router.patch('/admin/:id', async (req, res) => {
             throw new Error(err)
         })
 
-        delete updated.hashed_password
-        delete updated.user_type
-
         return res.json(updated).status(200)
     }
     catch(err) {
@@ -158,6 +174,12 @@ router.patch('/admin/:id', async (req, res) => {
 router.post('/register', userVerificator, passwordHash, async (req, res) => {
     try {
         const created = await prisma.users.create({
+            select: {
+                ...USER_SELECT,
+                servers: {
+                    select: SERVER_SELECT
+                }
+            },
             data: {
                 name: req.body.name,
                 surname: req.body.surname,
@@ -165,14 +187,8 @@ router.post('/register', userVerificator, passwordHash, async (req, res) => {
                 hashed_password: req.body.password,
                 email: req.body.email,
                 phone_number: req.body.phone_number
-            },
-            include: {
-                servers: true
             }
         })
-
-        delete created.hashed_password
-        delete created.user_type
 
         return res.json(created).status(200)
     }
