@@ -30,5 +30,6 @@ model users {
   hashed_password String    @db.VarChar(255)
   email           String    @db.VarChar(255)
   phone_number    String    @db.VarChar(9)
+  user_type       Int       @db.Integer @default(1)
   servers         slaves[]
 }

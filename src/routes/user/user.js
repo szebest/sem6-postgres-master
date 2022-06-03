@@ -14,6 +14,7 @@ router.get('/', async (_, res) => {
             }
         })).map((value) => {
             delete value.hashed_password
+            delete value.user_type
 
             return value
         })
@@ -39,6 +40,7 @@ router.get('/:id', async (req, res) => {
         })
 
         delete user.hashed_password
+        delete value.user_type
 
         return res.json(user).status(200)
     }
@@ -58,6 +60,7 @@ router.delete('/:id', async (req, res) => {
         })
 
         delete deleted.hashed_password
+        delete deleted.user_type
 
         return res.json(deleted).status(200)
     }
@@ -88,6 +91,7 @@ router.patch('/:id', async (req, res) => {
         })
 
         delete updated.hashed_password
+        delete updated.user_type
 
         return res.json(updated).status(200)
     }
@@ -141,6 +145,7 @@ router.patch('/admin/:id', async (req, res) => {
         })
 
         delete updated.hashed_password
+        delete updated.user_type
 
         return res.json(updated).status(200)
     }
@@ -167,6 +172,7 @@ router.post('/register', userVerificator, passwordHash, async (req, res) => {
         })
 
         delete created.hashed_password
+        delete created.user_type
 
         return res.json(created).status(200)
     }
