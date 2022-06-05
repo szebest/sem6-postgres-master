@@ -4,6 +4,7 @@ router = express.Router();
 const prisma = require('../../prismaClient')
 
 const { slaveVerificator } = require('../../middlewares/validators');
+const { isAtLeastDatabaseAdminValidator } = require('../../middlewares/authorization');
 
 router.get('/', async (_, res) => {
     try {
@@ -34,7 +35,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const deleted = await prisma.slaves.delete({
@@ -51,7 +52,7 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const updated = await prisma.users.update({
@@ -71,7 +72,7 @@ router.patch('/:id', async (req, res) => {
     }
 })
 
-router.post('/', slaveVerificator, async (req, res) => {
+router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, async (req, res) => {
     try {
         const created = await prisma.users.create({
             data: {

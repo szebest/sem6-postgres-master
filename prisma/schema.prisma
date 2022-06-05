@@ -15,7 +15,7 @@ datasource db {
 model slaves {
   id              Int       @id @default(autoincrement())
   server_URL      String    @db.VarChar(255)
-  owner           users?     @relation(fields: [ownerId], references: [id])
+  owner           users?    @relation(fields: [ownerId], references: [id])
   ownerId         Int?
 
   @@index(ownerId)
@@ -32,4 +32,8 @@ model users {
   phone_number    String    @db.VarChar(9)
   user_type       Int       @db.Integer @default(1)
   servers         slaves[]
+
+  @@unique(login)
+  @@unique(email)
+  @@unique(phone_number)
 }

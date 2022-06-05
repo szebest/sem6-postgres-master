@@ -3,8 +3,12 @@ router = express.Router();
 
 const prisma = require('../../prismaClient')
 
-const { userVerificator } = require('../../middlewares/validators');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
+const { userVerificator, userLoginValidator } = require('../../middlewares/validators');
 const passwordHash = require('../../middlewares/util/passwordHash');
+const { isAtLeastDatabaseAdminValidator, isSpecificUserValidator } = require('../../middlewares/authorization');
 
 const SERVER_SELECT = {
     server_URL: true,
@@ -24,7 +28,7 @@ const USER_SELECT = {
     user_type: false
 }
 
-router.get('/', async (_, res) => {
+router.get('/', isAtLeastDatabaseAdminValidator, async (_, res) => {
     try {
         const allUsers = (await prisma.users.findMany({
             select: {
@@ -66,7 +70,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isSpecificUserValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const deleted = await prisma.users.delete({
@@ -86,7 +90,7 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
-router.patch('/admin/:id', async (req, res) => {
+router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const updated = await prisma.$transaction(async (prisma) => {
@@ -140,7 +144,7 @@ router.patch('/admin/:id', async (req, res) => {
     }
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', isSpecificUserValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const updated = await prisma.users.update({
@@ -191,6 +195,40 @@ router.post('/register', userVerificator, passwordHash, async (req, res) => {
         })
 
         return res.json(created).status(200)
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+router.post('/login', userLoginValidator, async (req, res) => {
+    const { login, password } = req.body
+
+    try {
+        const user = (await prisma.users.findUnique({
+            where: {
+                login
+            },
+            select: {
+                id: true,
+                login: true,
+                hashed_password: true,
+                user_type: true
+            }
+        }))
+
+        const samePasswords = await bcrypt.compare(password, user.hashed_password)
+
+        if (samePasswords) {
+            const accessToken = jwt.sign({ id: user.id, login: user.login, userType: user.user_type }, 
+                                         process.env.ACCESS_TOKEN_SECRET)
+
+            return res.send({ accessToken, user_type: user.user_type }).status(200)
+        }
+        else {
+            return res.sendStatus(401)
+        }
     }
     catch(err) {
         console.log(err)
