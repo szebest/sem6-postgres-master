@@ -52,10 +52,10 @@ router.delete('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
     }
 })
 
-router.patch('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
+router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
-        const updated = await prisma.users.update({
+        const updated = await prisma.slaves.update({
             where: {
                 id
             },
