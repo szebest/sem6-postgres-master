@@ -13,7 +13,8 @@ const { isAtLeastDatabaseAdminValidator, isSpecificUserValidator } = require('..
 const SERVER_SELECT = {
     server_URL: true,
     id: true,
-    ownerId: false
+    ownerId: false,
+    parking_address: true
 }
 
 const USER_SELECT = {

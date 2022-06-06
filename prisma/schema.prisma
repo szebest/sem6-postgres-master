@@ -15,6 +15,7 @@ datasource db {
 model slaves {
   id              Int       @id @default(autoincrement())
   server_URL      String    @db.VarChar(255)
+  parking_address String    @db.VarChar(255)
   owner           users?    @relation(fields: [ownerId], references: [id])
   ownerId         Int?
 
