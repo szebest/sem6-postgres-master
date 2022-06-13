@@ -18,6 +18,11 @@ else {
   swaggerFile.host = "sem6-postgres-master.herokuapp.com"
 }
 
+swaggerFile.schemes = [
+  'https',
+  'http'
+]
+
 const main = async () => {
   await redis.connect()
 }
