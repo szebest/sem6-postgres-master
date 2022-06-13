@@ -8,7 +8,8 @@ const bcrypt = require('bcrypt');
 
 const { userVerificator, userLoginValidator } = require('../../middlewares/validators');
 const passwordHash = require('../../middlewares/util/passwordHash');
-const { isAtLeastDatabaseAdminValidator, isSpecificUserValidator } = require('../../middlewares/authorization');
+const { isAtLeastDatabaseAdminValidator, isSpecificUserValidator, isRefreshTokenValid } = require('../../middlewares/authorization');
+const { redis } = require('../../redis')
 
 const SERVER_SELECT = {
     server_URL: true,
@@ -223,13 +224,41 @@ router.post('/login', userLoginValidator, async (req, res) => {
 
         if (samePasswords) {
             const accessToken = jwt.sign({ id: user.id, login: user.login, userType: user.user_type }, 
-                                         process.env.ACCESS_TOKEN_SECRET)
+                process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.EXPIRES_IN })
 
-            return res.send({ accessToken, user_type: user.user_type }).status(200)
+            const value = await redis.get(user.id.toString());
+            
+            const refreshToken = value ?? jwt.sign({ id: user.id, login: user.login, userType: user.user_type }, 
+                process.env.REFRESH_TOKEN_SECRET)
+
+            await redis.setEx(user.id.toString(), 60, refreshToken) // TODO change this value later
+
+            return res.send({ accessToken, refreshToken, user_type: user.user_type }).status(200)
         }
         else {
             return res.sendStatus(401)
         }
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+router.post('/refresh', isRefreshTokenValid, async (req, res) => {
+    const { userLogin, userId, userType } = req
+
+    try {
+        const value = await redis.get(userId.toString());
+
+        if (!value) {
+            return res.sendStatus(401)
+        }
+
+        const accessToken = jwt.sign({ id: userId, login: userLogin, userType: userType }, 
+            process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.EXPIRES_IN })
+        
+        return res.send({ accessToken }).status(200)
     }
     catch(err) {
         console.log(err)
