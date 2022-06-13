@@ -4,6 +4,8 @@ const express = require('express')
 const app = express()
 const redis = require('./redis')
 
+const cors = require('cors')
+
 const PORT = process.env.PORT ?? 3000
 
 const swaggerUi = require('swagger-ui-express')
@@ -26,6 +28,9 @@ const bodyParser = require('body-parser')
 
 const routes = require('./routes');
 
+app.use(cors({
+  origin: '*'
+}));
 
 app.use(bodyParser())
 app.use('/api/v1', routes)
