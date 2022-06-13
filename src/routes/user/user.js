@@ -220,6 +220,10 @@ router.post('/login', userLoginValidator, async (req, res) => {
             }
         }))
 
+        if (!user) {
+            return res.sendStatus(404)
+        }
+
         const samePasswords = await bcrypt.compare(password, user.hashed_password)
 
         if (samePasswords) {
