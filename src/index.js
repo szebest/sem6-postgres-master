@@ -12,16 +12,15 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('../swagger-output.json')
 
 if (process.env.NODE_ENV === 'development') {
-  swaggerFile.host = "localhost:" + process.env.PORT
+  swaggerFile.host = "localhost:" + PORT
 }
 else {
   swaggerFile.host = "sem6-postgres-master.herokuapp.com"
+  swaggerFile.schemes = [
+    'https',
+    'http'
+  ]
 }
-
-swaggerFile.schemes = [
-  'https',
-  'http'
-]
 
 const main = async () => {
   await redis.connect()
