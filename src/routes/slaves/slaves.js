@@ -111,7 +111,8 @@ router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, async (req, 
     try {
         const created = await prisma.users.create({
             data: {
-                server_URL: req.body.server_url
+                server_URL: req.body.server_url,
+                parking_address: req.body.parking_address
             },
             include: {
                 servers: true
