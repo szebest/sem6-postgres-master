@@ -35,6 +35,12 @@ const USER_SELECT = {
 }
 
 router.get('/', isAtLeastDatabaseAdminValidator, async (_, res) => {
+    // #swagger.summary = 'Only database admin can access this route'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token',
+    } */
     try {
         const allUsers = (await prisma.users.findMany({
             select: {
@@ -54,6 +60,17 @@ router.get('/', isAtLeastDatabaseAdminValidator, async (_, res) => {
 })
 
 router.get('/:id', isSpecificUserValidator, async (req, res) => {
+    // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token',
+    } */
+
+    /*  #swagger.parameters['id'] = {
+                in: 'path',
+                description: 'Id of the user to get',
+    } */
     const id = parseInt(req.params.id)
     try {
         const user = await prisma.users.findUnique({
@@ -77,6 +94,17 @@ router.get('/:id', isSpecificUserValidator, async (req, res) => {
 })
 
 router.delete('/:id', isSpecificUserValidator, async (req, res) => {
+    // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token',
+    } */
+
+    /*  #swagger.parameters['id'] = {
+                in: 'path',
+                description: 'Id of the user to delete',
+    } */
     const id = parseInt(req.params.id)
     try {
         const deleted = await prisma.users.delete({
@@ -97,6 +125,17 @@ router.delete('/:id', isSpecificUserValidator, async (req, res) => {
 })
 
 router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
+    // #swagger.summary = 'Only database admin can access this route, used for making an regular user a parking owner'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token',
+    } */
+
+    /*  #swagger.parameters['id'] = {
+                in: 'path',
+                description: 'Id of the user to patch',
+    } */
     const id = parseInt(req.params.id)
     try {
         const updated = await prisma.$transaction(async (prisma) => {
@@ -151,6 +190,17 @@ router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, async (req, res) => 
 })
 
 router.patch('/:id', isSpecificUserValidator, async (req, res) => {
+    // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token',
+    } */
+
+    /*  #swagger.parameters['id'] = {
+                in: 'path',
+                description: 'Id of the user to patch',
+    } */
     const id = parseInt(req.params.id)
     try {
         const updated = await prisma.users.update({
@@ -182,6 +232,7 @@ router.patch('/:id', isSpecificUserValidator, async (req, res) => {
 })
 
 router.post('/register', userVerificator, passwordHash, async (req, res) => {
+    // #swagger.summary = 'Used for registering a new user'
     try {
         const created = await prisma.users.create({
             select: {
@@ -209,6 +260,7 @@ router.post('/register', userVerificator, passwordHash, async (req, res) => {
 })
 
 router.post('/login', userLoginValidator, async (req, res) => {
+    // #swagger.summary = 'Used for logging in'
     const { login, password } = req.body
 
     try {
@@ -254,6 +306,7 @@ router.post('/login', userLoginValidator, async (req, res) => {
 })
 
 router.post('/refresh', isRefreshTokenValid, async (req, res) => {
+    // #swagger.summary = 'Used for refreshing an access token with an provided refresh token'
     const { userLogin, userId, userType } = req
 
     try {
