@@ -382,6 +382,23 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "refresh_token"
+              ],
+              "properties": {
+                "refresh_token": {
+                  "example": "string",
+                  "type": "string",
+                  "description": "Refresh token"
+                }
+              }
+            }
           }
         ],
         "responses": {

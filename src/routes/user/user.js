@@ -465,6 +465,22 @@ router.post('/login', userLoginValidator, async (req, res) => {
 
 router.post('/refresh', isRefreshTokenValid, async (req, res) => {
     // #swagger.summary = 'Used for refreshing an access token with an provided refresh token'
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "required": ['refresh_token'],
+                "properties": {
+                    "refresh_token": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Refresh token"
+                    }
+                }
+            }
+    } */
     const { userLogin, userId, userType } = req
 
     try {
