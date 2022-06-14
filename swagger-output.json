@@ -48,7 +48,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "Id of the user to get"
           },
           {
@@ -81,7 +81,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "Id of the user to delete"
           },
           {
@@ -114,7 +114,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "Id of the user to patch"
           },
           {
@@ -130,22 +130,33 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Max 32 characters"
                 },
                 "surname": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Max 32 characters"
                 },
                 "login": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "email": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string"
                 },
                 "phone_number": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Precise 9 numbers"
                 }
               }
             }
@@ -176,7 +187,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "Id of the user to patch"
           },
           {
@@ -192,28 +203,48 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Max 32 characters"
                 },
                 "surname": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Max 32 characters"
                 },
                 "login": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "email": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string"
                 },
                 "phone_number": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Precise 9 numbers"
                 },
                 "user_type": {
-                  "example": "any"
+                  "example": "3",
+                  "type": "integer",
+                  "description": "Number from 1 to 3. 1 is regular user, 2 is parking owner, 3 is administrator"
                 },
                 "servers": {
-                  "example": "any"
+                  "example": "[1]",
+                  "type": "array",
+                  "description": "Array of ids of servers to connect to the user. Is set only when the user_type is provided and the value is >= 2",
+                  "items": {
+                    "id": {
+                      "type": "integer"
+                    }
+                  }
                 }
               }
             }
@@ -245,24 +276,43 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": [
+                "name",
+                "surname",
+                "login",
+                "password",
+                "email",
+                "phone_number"
+              ],
               "properties": {
                 "name": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Max 32 characters"
                 },
                 "surname": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Max 32 characters"
                 },
                 "login": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "email": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string"
                 },
                 "phone_number": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Precise 9 numbers"
                 }
               }
             }
@@ -288,12 +338,20 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": [
+                "login",
+                "password"
+              ],
               "properties": {
                 "login": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "Min 5 characters and max 32 characters"
                 }
               }
             }
@@ -371,9 +429,20 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": [
+                "login",
+                "password"
+              ],
               "properties": {
                 "server_url": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "The url of the parking backend"
+                },
+                "parking_address": {
+                  "example": "string",
+                  "type": "string",
+                  "description": "The address of the parking"
                 }
               }
             }
@@ -404,7 +473,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "Id of the parking to get"
           }
         ],
@@ -431,7 +500,7 @@
             "name": "authorization",
             "in": "header",
             "description": "Access token",
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "id",
@@ -464,7 +533,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "Id of the parking to update"
           },
           {
@@ -478,9 +547,20 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": [
+                "login",
+                "password"
+              ],
               "properties": {
                 "server_url": {
-                  "example": "any"
+                  "example": "string",
+                  "type": "string",
+                  "description": "The url of the parking backend"
+                },
+                "parking_address": {
+                  "example": "string",
+                  "type": "string",
+                  "description": "The address of the parking"
                 }
               }
             }

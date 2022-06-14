@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    const authRefreshToken = req.body.refresh_token
+    const authRefreshHeader = req.headers['authorization']
+    const authRefreshToken = authRefreshHeader && authRefreshHeader.split(' ')[1]
 
     if (authRefreshToken === null) return res.sendStatus(401)
     else {

@@ -70,6 +70,7 @@ router.get('/:id', isSpecificUserValidator, async (req, res) => {
     /*  #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id of the user to get',
+                "type": "integer"
     } */
     const id = parseInt(req.params.id)
     try {
@@ -104,6 +105,7 @@ router.delete('/:id', isSpecificUserValidator, async (req, res) => {
     /*  #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id of the user to delete',
+                "type": "integer"
     } */
     const id = parseInt(req.params.id)
     try {
@@ -135,6 +137,61 @@ router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, async (req, res) => 
     /*  #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id of the user to patch',
+                "type": "integer"
+    } */
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Max 32 characters"
+                    },
+                    "surname": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Max 32 characters"
+                    },
+                    "login": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "password": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "email": {
+                        "example": "string",
+                        "type": "string"
+                    },
+                    "phone_number": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Precise 9 numbers"
+                    },
+                    "user_type": {
+                        "example": "3",
+                        "type": "integer",
+                        "description": "Number from 1 to 3. 1 is regular user, 2 is parking owner, 3 is administrator"
+                    },
+                    "servers": {
+                        "example": "[1]",
+                        "type": "array",
+                        "description": "Array of ids of servers to connect to the user. Is set only when the user_type is provided and the value is >= 2",
+                        "items": {
+                            "id": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
     } */
     const id = parseInt(req.params.id)
     try {
@@ -200,6 +257,46 @@ router.patch('/:id', isSpecificUserValidator, async (req, res) => {
     /*  #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id of the user to patch',
+                "type": "integer"
+    } */
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Max 32 characters"
+                    },
+                    "surname": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Max 32 characters"
+                    },
+                    "login": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "password": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "email": {
+                        "example": "string",
+                        "type": "string"
+                    },
+                    "phone_number": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Precise 9 numbers"
+                    }
+                }
+            }
     } */
     const id = parseInt(req.params.id)
     try {
@@ -233,6 +330,46 @@ router.patch('/:id', isSpecificUserValidator, async (req, res) => {
 
 router.post('/register', userVerificator, passwordHash, async (req, res) => {
     // #swagger.summary = 'Used for registering a new user'
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "required": ['name', 'surname', 'login', 'password', 'email', 'phone_number'],
+                "properties": {
+                    "name": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Max 32 characters"
+                    },
+                    "surname": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Max 32 characters"
+                    },
+                    "login": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "password": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "email": {
+                        "example": "string",
+                        "type": "string"
+                    },
+                    "phone_number": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Precise 9 numbers"
+                    }
+                }
+            }
+    } */
     try {
         const created = await prisma.users.create({
             select: {
@@ -261,6 +398,27 @@ router.post('/register', userVerificator, passwordHash, async (req, res) => {
 
 router.post('/login', userLoginValidator, async (req, res) => {
     // #swagger.summary = 'Used for logging in'
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "required": ['login', 'password'],
+                "properties": {
+                    "login": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    },
+                    "password": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "Min 5 characters and max 32 characters"
+                    }
+                }
+            }
+    } */
     const { login, password } = req.body
 
     try {

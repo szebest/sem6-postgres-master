@@ -25,6 +25,7 @@ router.get('/:id', async (req, res) => {
     /*  #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id of the parking to get',
+                "type": "integer"
     } */
     const id = parseInt(req.params.id)
     try {
@@ -48,6 +49,7 @@ router.delete('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
     /*  #swagger.parameters['authorization'] = {
                 in: 'header',
                 description: 'Access token',
+                "type": "integer"
     } */
 
     /*  #swagger.parameters['id'] = {
@@ -81,6 +83,28 @@ router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, async (r
     /*  #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id of the parking to update',
+                "type": "integer"
+    } */
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "required": ['login', 'password'],
+                "properties": {
+                    "server_url": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "The url of the parking backend"
+                    },
+                    "parking_address": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "The address of the parking"
+                    }
+                }
+            }
     } */
     const id = parseInt(req.params.id)
     try {
@@ -89,7 +113,8 @@ router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, async (r
                 id
             },
             data: {
-                server_URL: req.body.server_url
+                server_URL: req.body.server_url,
+                parking_address: req.body.parking_address
             }
         })
 
@@ -107,6 +132,27 @@ router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, async (req, 
     /*  #swagger.parameters['authorization'] = {
                 in: 'header',
                 description: 'Access token',
+    } */
+
+    /*  #swagger.parameters['body'] = {
+            "name": "body",
+            "in": "body",
+            "@schema": {
+                "type": "object",
+                "required": ['login', 'password'],
+                "properties": {
+                    "server_url": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "The url of the parking backend"
+                    },
+                    "parking_address": {
+                        "example": "string",
+                        "type": "string",
+                        "description": "The address of the parking"
+                    }
+                }
+            }
     } */
     try {
         const created = await prisma.users.create({

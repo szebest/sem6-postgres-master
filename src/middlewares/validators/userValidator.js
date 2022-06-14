@@ -15,7 +15,7 @@ module.exports = ((req, res, next) => {
     if (!req.body.email) {
         errors.push("email")
     }
-    if (!req.body.phone_number) {
+    if (!req.body.phone_number || req.body.phone_number != 9 || req.body.phone_number.split('').some((c) => (c < '0' && c > '9'))) {
         errors.push("phone_number")
     }
 
