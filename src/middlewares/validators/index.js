@@ -1,5 +1,9 @@
+const userVerificator = require('../validators/userValidator')
+const userLoginValidator = require('../validators/userLoginValidator')
+const slaveVerificator = require('../validators/slaveValidator')
+
 module.exports = {
-    userVerificator: require('../validators/userValidator'),
-    userLoginValidator: require('../validators/userLoginValidator'),
-    slaveVerificator: require('../validators/slaveValidator')
+    userVerificator,
+    userLoginValidator,
+    slaveVerificator
 }

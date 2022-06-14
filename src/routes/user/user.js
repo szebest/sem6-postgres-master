@@ -1,16 +1,20 @@
 const express = require('express');
 router = express.Router();
 
-const prisma = require('../../prismaClient')
+const { redis } = require('../../redis')
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const { userVerificator, userLoginValidator } = require('../../middlewares/validators');
-const passwordHash = require('../../middlewares/util/passwordHash');
-const { isAtLeastDatabaseAdminValidator, isSpecificUserValidator, isRefreshTokenValid } = require('../../middlewares/authorization');
-const { redis } = require('../../redis')
+const prisma = require('../../prismaClient')
 
+const { passwordHash } = require('../../middlewares/util');
+
+const { userVerificator, userLoginValidator } = require('../../middlewares/validators');
+const { isAtLeastDatabaseAdminValidator,
+    isSpecificUserValidator,
+    isRefreshTokenValid } = require('../../middlewares/authorization');
+        
 const SERVER_SELECT = {
     server_URL: true,
     id: true,
@@ -49,7 +53,7 @@ router.get('/', isAtLeastDatabaseAdminValidator, async (_, res) => {
     }
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', isSpecificUserValidator, async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const user = await prisma.users.findUnique({

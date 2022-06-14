@@ -1,7 +1,13 @@
+const isLoggedInValidator = require('./isLoggedInValidator')
+const isAtLeastServerAdminValidator = require('./isAtLeastServerAdminValidator')
+const isAtLeastDatabaseAdminValidator = require('./isAtLeastDatabaseAdminValidator')
+const isSpecificUserValidator = require('./isSpecificUserValidator')
+const isRefreshTokenValid = require('./isRefreshTokenValid')
+
 module.exports = {
-    isLoggedInValidator: require('./isLoggedInValidator'),
-    isAtLeastServerAdminValidator: require('./isAtLeastServerAdminValidator'),
-    isAtLeastDatabaseAdminValidator: require('./isAtLeastDatabaseAdminValidator'),
-    isSpecificUserValidator: require('./isSpecificUserValidator'),
-    isRefreshTokenValid: require('./isRefreshTokenValid')
+    isLoggedInValidator,
+    isAtLeastServerAdminValidator,
+    isAtLeastDatabaseAdminValidator,
+    isSpecificUserValidator,
+    isRefreshTokenValid
 }
