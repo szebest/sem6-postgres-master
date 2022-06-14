@@ -464,7 +464,7 @@ router.post('/login', userLoginValidator, async (req, res) => {
 })
 
 router.post('/refresh', isRefreshTokenValid, async (req, res) => {
-    // #swagger.summary = 'Used for refreshing an access token with an provided refresh token'
+    // #swagger.summary = 'Used for refreshing an access token with an provided refresh token. Use the body to pass the refresh token idk why the authorization header shows up'
 
     /*  #swagger.parameters['body'] = {
             "name": "body",
