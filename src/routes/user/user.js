@@ -449,7 +449,7 @@ router.post('/login', userLoginValidator, async (req, res) => {
             const refreshToken = value ?? jwt.sign({ id: user.id, login: user.login, userType: user.user_type }, 
                 process.env.REFRESH_TOKEN_SECRET)
 
-            await redis.setEx(user.id.toString(), 60, refreshToken) // TODO change this value later
+            await redis.setEx(user.id.toString(), 60 * 60 * 24 * 14, refreshToken) // set expiration date to 14 days
 
             return res.send({ accessToken, refreshToken, user_type: user.user_type }).status(200)
         }
