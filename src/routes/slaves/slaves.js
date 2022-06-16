@@ -4,7 +4,7 @@ router = express.Router();
 const prisma = require('../../prismaClient')
 
 const { slaveVerificator } = require('../../middlewares/validators');
-const { isAtLeastDatabaseAdminValidator, hasUserValues } = require('../../middlewares/authorization');
+const { isAtLeastDatabaseAdminValidator, hasUserValues, isAtLeastServerAdminValidator } = require('../../middlewares/authorization');
 
 router.get('/', async (_, res) => {
     // #swagger.summary = 'Used for getting all data about available parkings'
@@ -12,6 +12,28 @@ router.get('/', async (_, res) => {
         const allSlaves = (await prisma.slaves.findMany())
 
         return res.json(allSlaves).status(200)
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+router.get('/ownerParkings', isAtLeastServerAdminValidator, hasUserValues, async (_, res) => {
+    // #swagger.summary = 'Used for getting all owner parkings. User has to be at least an server owner'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token',
+    } */
+    try {
+        const foundSlaves = (await prisma.slaves.findMany({
+            where: {
+                ownerId: req.userId
+            }
+        }))
+
+        return res.json(foundSlaves).status(200)
     }
     catch(err) {
         console.log(err)
