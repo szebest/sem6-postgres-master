@@ -238,7 +238,7 @@ router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, passw
         }).catch(err => {
             throw new Error(err)
         })
-
+        
         return res.json(updated).status(200)
     }
     catch(err) {
