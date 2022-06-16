@@ -4,7 +4,7 @@ router = express.Router();
 const prisma = require('../../prismaClient')
 
 const { slaveVerificator } = require('../../middlewares/validators');
-const { isAtLeastDatabaseAdminValidator } = require('../../middlewares/authorization');
+const { isAtLeastDatabaseAdminValidator, hasUserValues } = require('../../middlewares/authorization');
 
 router.get('/', async (_, res) => {
     // #swagger.summary = 'Used for getting all data about available parkings'
@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
+router.delete('/:id', isAtLeastDatabaseAdminValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'Only database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -72,7 +72,7 @@ router.delete('/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
     }
 })
 
-router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, async (req, res) => {
+router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'Only database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -126,7 +126,7 @@ router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, async (r
     }
 })
 
-router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, async (req, res) => {
+router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'Only database admin can access this route, used for creating a new parking'
 
     /*  #swagger.parameters['authorization'] = {

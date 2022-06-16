@@ -13,7 +13,8 @@ const { passwordHash } = require('../../middlewares/util');
 const { userVerificator, userLoginValidator } = require('../../middlewares/validators');
 const { isAtLeastDatabaseAdminValidator,
     isSpecificUserValidator,
-    isRefreshTokenValid } = require('../../middlewares/authorization');
+    isRefreshTokenValid, 
+    hasUserValues} = require('../../middlewares/authorization');
         
 const SERVER_SELECT = {
     server_URL: true,
@@ -34,7 +35,7 @@ const USER_SELECT = {
     user_type: false
 }
 
-router.get('/', isAtLeastDatabaseAdminValidator, async (_, res) => {
+router.get('/', isAtLeastDatabaseAdminValidator, hasUserValues, async (_, res) => {
     // #swagger.summary = 'Only database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -59,7 +60,7 @@ router.get('/', isAtLeastDatabaseAdminValidator, async (_, res) => {
     }
 })
 
-router.get('/:id', isSpecificUserValidator, async (req, res) => {
+router.get('/:id', isSpecificUserValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -94,7 +95,7 @@ router.get('/:id', isSpecificUserValidator, async (req, res) => {
     }
 })
 
-router.delete('/:id', isSpecificUserValidator, async (req, res) => {
+router.delete('/:id', isSpecificUserValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -126,7 +127,7 @@ router.delete('/:id', isSpecificUserValidator, async (req, res) => {
     }
 })
 
-router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, async (req, res) => {
+router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'Only database admin can access this route, used for making an regular user a parking owner'
 
     /*  #swagger.parameters['authorization'] = {
@@ -246,7 +247,7 @@ router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, async (req, res) => 
     }
 })
 
-router.patch('/:id', isSpecificUserValidator, async (req, res) => {
+router.patch('/:id', isSpecificUserValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -463,7 +464,7 @@ router.post('/login', userLoginValidator, async (req, res) => {
     }
 })
 
-router.post('/refresh', isRefreshTokenValid, async (req, res) => {
+router.post('/refresh', isRefreshTokenValid, hasUserValues, async (req, res) => {
     // #swagger.summary = 'Used for refreshing an access token with an provided refresh token. Use the body to pass the refresh token idk why the authorization header shows up'
 
     /*  #swagger.parameters['body'] = {
