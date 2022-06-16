@@ -452,7 +452,7 @@ router.post('/login', userLoginValidator, async (req, res) => {
 
             await redis.setEx(user.id.toString(), 60 * 60 * 24 * 14, refreshToken) // set expiration date to 14 days
 
-            return res.send({ accessToken, refreshToken, user_type: user.user_type }).status(200)
+            return res.send({ accessToken, refreshToken, user_type: user.user_type, user_id: user.id }).status(200)
         }
         else {
             return res.sendStatus(401)

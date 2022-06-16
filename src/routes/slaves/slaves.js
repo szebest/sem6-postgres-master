@@ -6,10 +6,19 @@ const prisma = require('../../prismaClient')
 const { slaveVerificator } = require('../../middlewares/validators');
 const { isAtLeastDatabaseAdminValidator, hasUserValues, isAtLeastServerAdminValidator } = require('../../middlewares/authorization');
 
+const SERVER_SELECT = {
+    server_URL: true,
+    id: true,
+    ownerId: false,
+    parking_address: true
+}
+
 router.get('/', async (_, res) => {
     // #swagger.summary = 'Used for getting all data about available parkings'
     try {
-        const allSlaves = (await prisma.slaves.findMany())
+        const allSlaves = (await prisma.slaves.findMany({
+            select: SERVER_SELECT
+        }))
 
         return res.json(allSlaves).status(200)
     }
@@ -52,6 +61,7 @@ router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     try {
         const slave = await prisma.slaves.findUnique({
+            select: SERVER_SELECT,
             where: {
                 id
             }

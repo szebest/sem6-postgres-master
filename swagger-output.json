@@ -375,7 +375,7 @@
     },
     "/api/v1/users/refresh": {
       "post": {
-        "summary": "Used for refreshing an access token with an provided refresh token",
+        "summary": "Used for refreshing an access token with an provided refresh token. Use the body to pass the refresh token idk why the authorization header shows up",
         "description": "",
         "parameters": [
           {
@@ -463,6 +463,34 @@
                 }
               }
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/slaves/ownerParkings": {
+      "get": {
+        "summary": "Used for getting all owner parkings. User has to be at least an server owner",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "Access token",
+            "type": "string"
           }
         ],
         "responses": {
