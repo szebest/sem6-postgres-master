@@ -127,7 +127,7 @@ router.delete('/:id', isSpecificUserValidator, hasUserValues, async (req, res) =
     }
 })
 
-router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, async (req, res) => {
+router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, passwordHash, async (req, res) => {
     // #swagger.summary = 'Only database admin can access this route, used for making an regular user a parking owner'
 
     /*  #swagger.parameters['authorization'] = {
@@ -247,7 +247,7 @@ router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, async
     }
 })
 
-router.patch('/:id', isSpecificUserValidator, hasUserValues, async (req, res) => {
+router.patch('/:id', isSpecificUserValidator, hasUserValues, passwordHash, async (req, res) => {
     // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
