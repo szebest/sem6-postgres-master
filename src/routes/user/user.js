@@ -452,6 +452,9 @@ router.post('/login', userLoginValidator, async (req, res) => {
 
             await redis.setEx(user.id.toString(), 60 * 60 * 24 * 14, refreshToken) // set expiration date to 14 days
 
+            console.log(`Generated access token: ${accessToken}`)
+            console.log(`Generated refresh token: ${refreshToken}`)
+
             return res.send({ accessToken, refreshToken, user_type: user.user_type, user_id: user.id }).status(200)
         }
         else {
@@ -493,6 +496,8 @@ router.post('/refresh', isRefreshTokenValid, hasUserValues, async (req, res) => 
 
         const accessToken = jwt.sign({ id: userId, login: userLogin, userType: userType }, 
             process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.EXPIRES_IN })
+
+        console.log(`Generated access token: ${accessToken}`)
         
         return res.send({ accessToken }).status(200)
     }
