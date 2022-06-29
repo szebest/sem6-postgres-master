@@ -28,7 +28,7 @@ router.get('/', async (_, res) => {
     }
 })
 
-router.get('/ownerParkings', isAtLeastServerAdminValidator, hasUserValues, async (_, res) => {
+router.get('/ownerParkings', isAtLeastServerAdminValidator, hasUserValues, async (req, res) => {
     // #swagger.summary = 'Used for getting all owner parkings. User has to be at least an server owner'
 
     /*  #swagger.parameters['authorization'] = {
