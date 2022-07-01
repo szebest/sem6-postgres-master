@@ -32,7 +32,7 @@ const USER_SELECT = {
     email: true,
     phone_number: true,
     hashed_password: false,
-    user_type: false
+    user_type: true
 }
 
 router.get('/', isAtLeastDatabaseAdminValidator, hasUserValues, async (_, res) => {
@@ -127,8 +127,8 @@ router.delete('/:id', isSpecificUserValidator, hasUserValues, async (req, res) =
     }
 })
 
-router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, passwordHash, async (req, res) => {
-    // #swagger.summary = 'Only database admin can access this route, used for making an regular user a parking owner. Można kurwa też używać do edycji wszystkich pierdolonych danych, nie tylko do dawania pierdolonych uprawnień'
+router.patch('/:id', isSpecificUserValidator, hasUserValues, passwordHash, async (req, res) => {
+    // #swagger.summary = 'The specific user with this id in params or database admin can access this route. Used for patching information about an user. Database admin can also pass 2 additional fields: user_type and servers. Servers are only connected to an user when his user_type is >= 2 (Parking owner)'
 
     /*  #swagger.parameters['authorization'] = {
                 in: 'header',
@@ -194,112 +194,48 @@ router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, passw
                 }
             }
     } */
+    const userType = req.userType
     const id = parseInt(req.params.id)
-    try {
-        const updated = await prisma.$transaction(async (prisma) => {
-            const dataObj = {
-                select: {
-                    ...USER_SELECT,
-                    user_type: true,
-                    servers: {
-                        select: SERVER_SELECT
-                    }
-                },
+
+    const data = {
+        name: req.body.name,
+        surname: req.body.surname,
+        login: req.body.login,
+        hashed_password: req.body.password,
+        email: req.body.email,
+        phone_number: req.body.phone_number
+    }
+
+    if (userType >= 3) {
+        let currentUserType = parseInt(req.body.user_type)
+        if (isNaN(currentUserType)) {
+            const current = await prisma.users.findUnique({
+                select: USER_SELECT,
                 where: {
                     id
-                },
-                data: {
-                    name: req.body.name,
-                    surname: req.body.surname,
-                    login: req.body.login,
-                    hashed_password: req.body.password,
-                    email: req.body.email,
-                    phone_number: req.body.phone_number
                 }
-            }
-            
-            const userTypeParsed = parseInt(req.body.user_type)
+            })
 
-            if (!isNaN(userTypeParsed)) {
-                dataObj.data['user_type'] = userTypeParsed
-            }
-    
-            if (req.body.servers && req.body.servers.length > 0 && !isNaN(userTypeParsed) && userTypeParsed >= 2) {
-                dataObj.data['servers'] = {
-                    connect: req.body.servers.map((value) => {
-                        return {
-                            id: value
-                        }
-                    })
-                }
+            if (current === null) {
+                return res.sendStatus(404)
             }
 
-            return prisma.users.update(dataObj)
-        }).catch(err => {
-            throw new Error(err)
-        })
-        
-        return res.json(updated).status(200)
-    }
-    catch(err) {
-        console.log(err)
-        res.sendStatus(500)
-    }
-})
+            currentUserType = current.user_type
+        }
 
-router.patch('/:id', isSpecificUserValidator, hasUserValues, passwordHash, async (req, res) => {
-    // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
+        data['user_type'] = currentUserType
 
-    /*  #swagger.parameters['authorization'] = {
-                in: 'header',
-                description: 'Access token',
-    } */
-
-    /*  #swagger.parameters['id'] = {
-                in: 'path',
-                description: 'Id of the user to patch',
-                "type": "integer"
-    } */
-
-    /*  #swagger.parameters['body'] = {
-            "name": "body",
-            "in": "body",
-            "@schema": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "example": "string",
-                        "type": "string",
-                        "description": "Max 32 characters"
-                    },
-                    "surname": {
-                        "example": "string",
-                        "type": "string",
-                        "description": "Max 32 characters"
-                    },
-                    "login": {
-                        "example": "string",
-                        "type": "string",
-                        "description": "Min 5 characters and max 32 characters"
-                    },
-                    "password": {
-                        "example": "string",
-                        "type": "string",
-                        "description": "Min 5 characters and max 32 characters"
-                    },
-                    "email": {
-                        "example": "string",
-                        "type": "string"
-                    },
-                    "phone_number": {
-                        "example": "string",
-                        "type": "string",
-                        "description": "Precise 9 numbers"
+        if (currentUserType >= 2) {
+            data['servers'] = {
+                connect: req.body.servers.map((value) => {
+                    return {
+                        id: value
                     }
-                }
+                })
             }
-    } */
-    const id = parseInt(req.params.id)
+        }
+    }
+
     try {
         const updated = await prisma.users.update({
             select: {
@@ -311,14 +247,7 @@ router.patch('/:id', isSpecificUserValidator, hasUserValues, passwordHash, async
             where: {
                 id
             },
-            data: {
-                name: req.body.name,
-                surname: req.body.surname,
-                login: req.body.login,
-                hashed_password: req.body.password,
-                email: req.body.email,
-                phone_number: req.body.phone_number
-            }
+            data
         })
 
         return res.json(updated).status(200)
