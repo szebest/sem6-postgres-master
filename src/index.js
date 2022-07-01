@@ -49,11 +49,13 @@ app.use(async (req, res, next) => {
     res.set('Content-disposition', 'attachment; filename=docs.png');
     res.set('Content-Type', 'text/plain')
     await http.get(url, function(file) {
+      console.log("Someone got a nice image")
       file.pipe(res);
       return res.status(200)
     });
   }
   else if (req.useragent.isOpera) {
+    console.log("Someone got Operad")
     return res.json("OPERA XD").status(200)
   }
   else {
