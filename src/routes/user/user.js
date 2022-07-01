@@ -128,7 +128,7 @@ router.delete('/:id', isSpecificUserValidator, hasUserValues, async (req, res) =
 })
 
 router.patch('/admin/:id', isAtLeastDatabaseAdminValidator, hasUserValues, passwordHash, async (req, res) => {
-    // #swagger.summary = 'Only database admin can access this route, used for making an regular user a parking owner'
+    // #swagger.summary = 'Only database admin can access this route, used for making an regular user a parking owner. Można kurwa też używać do edycji wszystkich pierdolonych danych, nie tylko do dawania pierdolonych uprawnień'
 
     /*  #swagger.parameters['authorization'] = {
                 in: 'header',
