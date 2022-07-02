@@ -227,11 +227,11 @@ router.patch('/:id', isSpecificUserValidator, hasUserValues, passwordHash, async
 
         if (currentUserType >= 2) {
             data['servers'] = {
-                connect: req.body.servers.map((value) => {
+                connect: req.body.sersers ? req.body.servers.map((value) => {
                     return {
                         id: value
                     }
-                })
+                }) : undefined
             }
         }
     }
