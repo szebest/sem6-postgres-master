@@ -18,6 +18,7 @@ model slaves {
   parking_address String    @db.VarChar(255)
   owner           users?    @relation(fields: [ownerId], references: [id])
   ownerId         Int?
+  parking_spaces  Int
 
   @@index(ownerId)
 }

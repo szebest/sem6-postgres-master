@@ -10,7 +10,8 @@ const SERVER_SELECT = {
     server_URL: true,
     id: true,
     ownerId: false,
-    parking_address: true
+    parking_address: true,
+    parking_spaces: true
 }
 
 router.get('/', async (_, res) => {
@@ -43,6 +44,30 @@ router.get('/ownerParkings', isAtLeastServerAdminValidator, hasUserValues, async
         }))
 
         return res.json(foundSlaves).status(200)
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+router.get('/parkingSlotsInParking', async (req, res) => {
+    // #swagger.summary = 'Used internally in the database'
+    try {
+        const foundSlaveParkingSpaces = (await prisma.slaves.findFirst({
+            select: {
+                parking_spaces
+            },
+            where: {
+                server_URL: req.headers.host
+            }
+        }))
+
+        if (!foundSlaveParkingSpaces) {
+            res.sendStatus(404)
+        }
+
+        return res.json(foundSlaveParkingSpaces).status(200)
     }
     catch(err) {
         console.log(err)
