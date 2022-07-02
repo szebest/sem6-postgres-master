@@ -53,10 +53,11 @@ router.get('/ownerParkings', isAtLeastServerAdminValidator, hasUserValues, async
 
 router.get('/parkingSlotsInParking', async (req, res) => {
     // #swagger.summary = 'Used internally in the database'
+    console.log(req.headers.host)
     try {
         const foundSlaveParkingSpaces = (await prisma.slaves.findFirst({
             select: {
-                parking_spaces
+                parking_spaces: true
             },
             where: {
                 server_URL: req.headers.host
