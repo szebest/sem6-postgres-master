@@ -14,7 +14,8 @@ const { userVerificator, userLoginValidator } = require('../../middlewares/valid
 const { isAtLeastDatabaseAdminValidator,
     isSpecificUserValidator,
     isRefreshTokenValid, 
-    hasUserValues} = require('../../middlewares/authorization');
+    hasUserValues,
+    isSlave} = require('../../middlewares/authorization');
         
 const SERVER_SELECT = {
     server_URL: true,
@@ -53,6 +54,38 @@ router.get('/', isAtLeastDatabaseAdminValidator, hasUserValues, async (_, res) =
         }))
 
         return res.json(allUsers).status(200)
+    }
+    catch(err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+})
+
+router.get('/getEmailBySlave/:id', isSlave, async (req, res) => {
+    // #swagger.summary = 'Only used internally in the app'
+
+    /*  #swagger.parameters['authorization'] = {
+                in: 'header',
+                description: 'Access token with the stored secret',
+    } */
+
+    /*  #swagger.parameters['id'] = {
+                in: 'path',
+                description: 'Id of the user email to get',
+                "type": "integer"
+    } */
+    const id = parseInt(req.params.id)
+    try {
+        const user = await prisma.users.findUnique({
+            select: {
+                email: true
+            },
+            where: {
+                id
+            },
+        })
+
+        return res.json(user).status(200)
     }
     catch(err) {
         console.log(err)

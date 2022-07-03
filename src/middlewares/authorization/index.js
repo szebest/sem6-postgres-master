@@ -3,6 +3,7 @@ const isAtLeastServerAdminValidator = require('./isAtLeastServerAdminValidator')
 const isAtLeastDatabaseAdminValidator = require('./isAtLeastDatabaseAdminValidator')
 const isSpecificUserValidator = require('./isSpecificUserValidator')
 const isRefreshTokenValid = require('./isRefreshTokenValid')
+const isSlave = require('./isSlave')
 const hasUserValues = require('./hasUserValues')
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
     isAtLeastDatabaseAdminValidator,
     isSpecificUserValidator,
     isRefreshTokenValid,
+    isSlave,
     hasUserValues
 }
