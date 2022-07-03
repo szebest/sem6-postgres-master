@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
     else {
         jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, (err, slave) => {
             if (err) return res.sendStatus(403)
-            console.log(slave.secret, process.env.SLAVE_SECRET)
+            
             if (slave.secret !== process.env.SLAVE_SECRET) return res.sendStatus(403)
 
             next()
