@@ -11,7 +11,9 @@ const SERVER_SELECT = {
     id: true,
     ownerId: false,
     parking_address: true,
-    parking_spaces: true
+    parking_spaces: true,
+    price_per_hour: true,
+    price_per_overtime_hour: true
 }
 
 router.get('/', async (_, res) => {
@@ -51,12 +53,14 @@ router.get('/ownerParkings', isAtLeastServerAdminValidator, hasUserValues, async
     }
 })
 
-router.get('/parkingSlotsInParking', async (req, res) => {
+router.get('/parkingInformation', async (req, res) => {
     // #swagger.summary = 'Used internally in the database'
     try {
         const foundSlaveParkingSpaces = (await prisma.slaves.findFirst({
             select: {
-                parking_spaces: true
+                parking_spaces: true,
+                price_per_hour: true,
+                price_per_overtime_hour: true
             },
             where: {
                 server_URL: req.params.server
@@ -159,6 +163,21 @@ router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserV
                         "example": "string",
                         "type": "string",
                         "description": "The address of the parking"
+                    },
+                    "parking_spaces": {
+                        "example": "10",
+                        "type": "integer",
+                        "description": "The amount of parking spaces in this parking"
+                    },
+                    "price_per_hour": {
+                        "example": "5.0",
+                        "type": "decimal",
+                        "description": "The price per hour on this parking"
+                    },
+                    "price_per_overtime_hour": {
+                        "example": "10.0",
+                        "type": "decimal",
+                        "description": "The overtime price per hour, when the user stays too long"
                     }
                 }
             }
@@ -171,7 +190,10 @@ router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserV
             },
             data: {
                 server_URL: req.body.server_url,
-                parking_address: req.body.parking_address
+                parking_address: req.body.parking_address,
+                parking_spaces: req.body.parking_spaces,
+                price_per_hour: req.body.price_per_hour,
+                price_per_overtime_hour: req.body.price_per_overtime_hour
             }
         })
 
@@ -207,6 +229,21 @@ router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValue
                         "example": "string",
                         "type": "string",
                         "description": "The address of the parking"
+                    },
+                    "parking_spaces": {
+                        "example": "10",
+                        "type": "integer",
+                        "description": "The amount of parking spaces in this parking"
+                    },
+                    "price_per_hour": {
+                        "example": "5.0",
+                        "type": "decimal",
+                        "description": "The price per hour on this parking"
+                    },
+                    "price_per_overtime_hour": {
+                        "example": "10.0",
+                        "type": "decimal",
+                        "description": "The overtime price per hour, when the user stays too long"
                     }
                 }
             }
@@ -215,7 +252,10 @@ router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValue
         const created = await prisma.users.create({
             data: {
                 server_URL: req.body.server_url,
-                parking_address: req.body.parking_address
+                parking_address: req.body.parking_address,
+                parking_spaces: req.body.parking_spaces,
+                price_per_hour: req.body.price_per_hour,
+                price_per_overtime_hour: req.body.price_per_overtime_hour
             },
             include: {
                 servers: true

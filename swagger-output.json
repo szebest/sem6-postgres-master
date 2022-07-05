@@ -39,6 +39,41 @@
         }
       }
     },
+    "/api/v1/users/getEmailBySlave/{id}": {
+      "get": {
+        "summary": "Only used internally in the app",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Id of the user email to get"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "Access token with the stored secret",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/v1/users/{id}": {
       "get": {
         "summary": "The specific user with this id in params or database admin can access this route",
@@ -107,80 +142,7 @@
         }
       },
       "patch": {
-        "summary": "The specific user with this id in params or database admin can access this route",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "description": "Id of the user to patch"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "description": "Access token",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "example": "string",
-                  "type": "string",
-                  "description": "Max 32 characters"
-                },
-                "surname": {
-                  "example": "string",
-                  "type": "string",
-                  "description": "Max 32 characters"
-                },
-                "login": {
-                  "example": "string",
-                  "type": "string",
-                  "description": "Min 5 characters and max 32 characters"
-                },
-                "password": {
-                  "example": "string",
-                  "type": "string",
-                  "description": "Min 5 characters and max 32 characters"
-                },
-                "email": {
-                  "example": "string",
-                  "type": "string"
-                },
-                "phone_number": {
-                  "example": "string",
-                  "type": "string",
-                  "description": "Precise 9 numbers"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/v1/users/admin/{id}": {
-      "patch": {
-        "summary": "Only database admin can access this route, used for making an regular user a parking owner",
+        "summary": "The specific user with this id in params or database admin can access this route. Used for patching information about an user. Database admin can also pass 2 additional fields: user_type and servers. Servers are only connected to an user when his user_type is >= 2 (Parking owner)",
         "description": "",
         "parameters": [
           {
@@ -259,6 +221,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -509,6 +474,24 @@
         }
       }
     },
+    "/api/v1/slaves/parkingInformation": {
+      "get": {
+        "summary": "Used internally in the database",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/v1/slaves/{id}": {
       "get": {
         "summary": "Used for getting data about an specific available parking",
@@ -606,6 +589,21 @@
                   "example": "string",
                   "type": "string",
                   "description": "The address of the parking"
+                },
+                "parking_spaces": {
+                  "example": "10",
+                  "type": "integer",
+                  "description": "The amount of parking spaces in this parking"
+                },
+                "price_per_hour": {
+                  "example": "5.0",
+                  "type": "decimal",
+                  "description": "The price per hour on this parking"
+                },
+                "price_per_overtime_hour": {
+                  "example": "10.0",
+                  "type": "decimal",
+                  "description": "The overtime price per hour, when the user stays too long"
                 }
               }
             }
