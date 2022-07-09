@@ -133,8 +133,8 @@ router.delete('/:id', isAtLeastDatabaseAdminValidator, hasUserValues, async (req
     }
 })
 
-router.patch('/:id', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValues, async (req, res) => {
-    // #swagger.summary = 'Only database admin can access this route'
+router.patch('/:id', isAtLeastServerAdminValidator, hasUserValues, async (req, res) => {
+    // #swagger.summary = 'User has to be at least an parking owner'
 
     /*  #swagger.parameters['authorization'] = {
                 in: 'header',
