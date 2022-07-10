@@ -425,6 +425,21 @@
                   "example": "string",
                   "type": "string",
                   "description": "The address of the parking"
+                },
+                "parking_spaces": {
+                  "example": "10",
+                  "type": "integer",
+                  "description": "The amount of parking spaces in this parking"
+                },
+                "price_per_hour": {
+                  "example": "5.0",
+                  "type": "decimal",
+                  "description": "The price per hour on this parking"
+                },
+                "price_per_overtime_hour": {
+                  "example": "10.0",
+                  "type": "decimal",
+                  "description": "The overtime price per hour, when the user stays too long"
                 }
               }
             }
@@ -554,7 +569,7 @@
         }
       },
       "patch": {
-        "summary": "Only database admin can access this route",
+        "summary": "User has to be at least an parking owner",
         "description": "",
         "parameters": [
           {
