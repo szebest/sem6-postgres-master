@@ -440,6 +440,16 @@
                   "example": "10.0",
                   "type": "decimal",
                   "description": "The overtime price per hour, when the user stays too long"
+                },
+                "latitude": {
+                  "example": "5.0",
+                  "type": "float",
+                  "description": "The latitude of the parking"
+                },
+                "longitude": {
+                  "example": "10.0",
+                  "type": "float",
+                  "description": "The longitude of the parking"
                 }
               }
             }
@@ -619,6 +629,16 @@
                   "example": "10.0",
                   "type": "decimal",
                   "description": "The overtime price per hour, when the user stays too long"
+                },
+                "latitude": {
+                  "example": "5.0",
+                  "type": "float",
+                  "description": "The latitude of the parking"
+                },
+                "longitude": {
+                  "example": "10.0",
+                  "type": "float",
+                  "description": "The longitude of the parking"
                 }
               }
             }
