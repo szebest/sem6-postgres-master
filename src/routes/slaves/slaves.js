@@ -13,7 +13,9 @@ const SERVER_SELECT = {
     parking_address: true,
     parking_spaces: true,
     price_per_hour: true,
-    price_per_overtime_hour: true
+    price_per_overtime_hour: true,
+    latitude: true,
+    longitude: true
 }
 
 router.get('/', async (_, res) => {
@@ -60,7 +62,9 @@ router.get('/parkingInformation', async (req, res) => {
             select: {
                 parking_spaces: true,
                 price_per_hour: true,
-                price_per_overtime_hour: true
+                price_per_overtime_hour: true,
+                latitude: true,
+                longitude: true
             },
             where: {
                 server_URL: req.params.server
@@ -178,6 +182,16 @@ router.patch('/:id', isAtLeastServerAdminValidator, hasUserValues, async (req, r
                         "example": "10.0",
                         "type": "decimal",
                         "description": "The overtime price per hour, when the user stays too long"
+                    },
+                    "latitude": {
+                        "example": "5.0",
+                        "type": "float",
+                        "description": "The latitude of the parking"
+                    },
+                    "longitude": {
+                        "example": "10.0",
+                        "type": "float",
+                        "description": "The longitude of the parking"
                     }
                 }
             }
@@ -193,7 +207,9 @@ router.patch('/:id', isAtLeastServerAdminValidator, hasUserValues, async (req, r
                 parking_address: req.body.parking_address,
                 parking_spaces: req.body.parking_spaces,
                 price_per_hour: req.body.price_per_hour,
-                price_per_overtime_hour: req.body.price_per_overtime_hour
+                price_per_overtime_hour: req.body.price_per_overtime_hour,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude
             }
         })
 
@@ -244,6 +260,16 @@ router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValue
                         "example": "10.0",
                         "type": "decimal",
                         "description": "The overtime price per hour, when the user stays too long"
+                    },
+                    "latitude": {
+                        "example": "5.0",
+                        "type": "float",
+                        "description": "The latitude of the parking"
+                    },
+                    "longitude": {
+                        "example": "10.0",
+                        "type": "float",
+                        "description": "The longitude of the parking"
                     }
                 }
             }
@@ -255,7 +281,9 @@ router.post('/', slaveVerificator, isAtLeastDatabaseAdminValidator, hasUserValue
                 parking_address: req.body.parking_address,
                 parking_spaces: req.body.parking_spaces,
                 price_per_hour: req.body.price_per_hour,
-                price_per_overtime_hour: req.body.price_per_overtime_hour
+                price_per_overtime_hour: req.body.price_per_overtime_hour,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude
             },
             include: {
                 servers: true

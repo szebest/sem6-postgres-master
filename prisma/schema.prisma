@@ -21,8 +21,8 @@ model slaves {
   parking_spaces          Int
   price_per_hour          Decimal   @default(4.00) @db.Decimal(10, 2)
   price_per_overtime_hour Decimal   @default(6.00) @db.Decimal(10, 2)
-  latitude                Float     @default(50.28889)
-  longitude               Float     @default(18.67802)
+  latitude                Float     
+  longitude               Float     
 
   @@index(ownerId)
 }
