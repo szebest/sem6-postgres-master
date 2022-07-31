@@ -39,7 +39,7 @@
         }
       }
     },
-    "/api/v1/users/getEmailBySlave/{id}": {
+    "/api/v1/users/getCustomerInfoBySlave/{id}": {
       "get": {
         "summary": "Only used internally in the app",
         "description": "",
@@ -102,6 +102,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"

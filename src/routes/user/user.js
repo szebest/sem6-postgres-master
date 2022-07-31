@@ -66,7 +66,7 @@ router.get('/', isAtLeastDatabaseAdminValidator, hasUserValues, async (_, res) =
     }
 })
 
-router.get('/getEmailBySlave/:id', isSlave, async (req, res) => {
+router.get('/getCustomerInfoBySlave/:id', isSlave, async (req, res) => {
     // #swagger.summary = 'Only used internally in the app'
 
     /*  #swagger.parameters['authorization'] = {
@@ -83,7 +83,10 @@ router.get('/getEmailBySlave/:id', isSlave, async (req, res) => {
     try {
         const user = await prisma.users.findUnique({
             select: {
-                email: true
+                email: true,
+                servers: {
+                    server_URL: true
+                }
             },
             where: {
                 id
