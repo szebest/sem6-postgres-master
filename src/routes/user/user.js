@@ -85,7 +85,9 @@ router.get('/getCustomerInfoBySlave/:id', isSlave, async (req, res) => {
             select: {
                 email: true,
                 servers: {
-                    server_URL: true
+                    select: {
+                        server_URL: true
+                    }
                 }
             },
             where: {
