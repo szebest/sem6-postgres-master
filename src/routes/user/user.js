@@ -21,7 +21,12 @@ const SERVER_SELECT = {
     server_URL: true,
     id: true,
     ownerId: false,
-    parking_address: true
+    parking_address: true,
+    parking_spaces: true,
+    price_per_hour: true,
+    price_per_overtime_hour: true,
+    latitude: true,
+    longitude: true
 }
 
 const USER_SELECT = {
@@ -93,7 +98,7 @@ router.get('/getEmailBySlave/:id', isSlave, async (req, res) => {
     }
 })
 
-router.get('/:id', isSpecificUserValidator, hasUserValues, async (req, res) => {
+router.get('/:id', (req, res, next) => isSpecificUserValidator(req, res, next, 2), hasUserValues, async (req, res) => {
     // #swagger.summary = 'The specific user with this id in params or database admin can access this route'
 
     /*  #swagger.parameters['authorization'] = {
@@ -119,6 +124,10 @@ router.get('/:id', isSpecificUserValidator, hasUserValues, async (req, res) => {
                 id
             },
         })
+
+        if (user === null) {
+            return res.sendStatus(404)
+        }
 
         return res.json(user).status(200)
     }
@@ -336,10 +345,7 @@ router.post('/register', userVerificator, passwordHash, async (req, res) => {
     try {
         const created = await prisma.users.create({
             select: {
-                ...USER_SELECT,
-                servers: {
-                    select: SERVER_SELECT
-                }
+                ...USER_SELECT
             },
             data: {
                 name: req.body.name,
