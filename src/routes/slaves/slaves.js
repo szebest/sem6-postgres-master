@@ -67,7 +67,7 @@ router.get('/parkingInformation', async (req, res) => {
                 longitude: true
             },
             where: {
-                server_URL: req.params.server
+                server_URL: req.query.server
             }
         }))
 
