@@ -27,9 +27,9 @@ This repo contains code for the main backend. This backend handles authenticatio
 ### Deployment
 1. There is a Procfile that is configured to host this project on heroku
 
-Deployed on Heroku - [link]([(https://sem6-postgres-master.herokuapp.com/)])
+Deployed on Heroku - [link](https://sem6-postgres-master.herokuapp.com/)
 
-Endpoint documentation [link]([https://sem6-postgres-master.herokuapp.com/docs/])
+Endpoint documentation [link](https://sem6-postgres-master.herokuapp.com/docs/)
 
 The routes in this project start with an prefix `/api/v1/`
 
