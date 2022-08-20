@@ -2,7 +2,7 @@
   "name": "Sem 6 master backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "dependencies": {
     "@prisma/client": "^3.14.0",
     "bcrypt": "^5.0.1",
